@@ -10,15 +10,15 @@ module.exports = (sequelize) => {
         },
         lastName: {
             type: DataTypes.STRING,
-            allowNull: true,
+            allowNull: false,
         },
         emailAddress: {
             type: DataTypes.STRING,
-            allowNull: true,
+            allowNull: false,
         },
         password: {
             type: DataTypes.STRING,
-            allowNull: true
+            allowNull: false
         },
     }, {
         sequelize,
@@ -27,7 +27,7 @@ module.exports = (sequelize) => {
 
     User.associate = (models) => {
         User.hasMany(models.Course, {
-            as: 'user', //alias
+            as: 'user', //alias to prevent capitalization issues
             foreignKey: {
                 fieldName: 'userId',
                 allowNull: false,
