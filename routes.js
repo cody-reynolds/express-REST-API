@@ -10,6 +10,9 @@ const router = express.Router();
 const User = require('./models').User;
 const Course = require ('./models').Course;
 
+// Import bcrypt to encrypt passwords
+const bcrypt = require('bcryptjs');
+
 
 // Handler function to wrap each route
 function asyncHandler(cb) {
@@ -28,17 +31,26 @@ function asyncHandler(cb) {
  * USER Routes
  */
 
-// Route that returns a list of all users
+// GET Route that returns a list of all users
 router.get('/users', asyncHandler(async (req, res) => {
     let users = await User.findAll();
     res.status(200).json(users);
 }));
 
+//GET Route that returns a specific user
+router.get('/users/:id', asyncHandler(async (req, res) => {
+    let user = await User.findByPk(req.params.id, {
+    });
+    res.status(200).json(user);
+}));
 
-// Route that creates a new user
+
+// POST Route that creates a new user
 router.post('/users', asyncHandler(async (req, res) => {
     try{
-        await User.create(req.body);
+        const user = req.body;
+        user.password = await bcrypt.hash(user.password, 10);
+        await User.create(user);
         res.location = '/';
         res.status(201).end();
     } catch (error) {
@@ -50,6 +62,13 @@ router.post('/users', asyncHandler(async (req, res) => {
             throw error;
         }
     }
+}));
+
+//DELETE route that deletes a user
+router.delete('/users/:id', asyncHandler(async (req, res) => {
+    const user = await User.findByPk(req.params.id)
+    await user.destroy();
+    res.status(204).end();
 }));
 
 /**
@@ -121,8 +140,8 @@ router.post('/courses', asyncHandler(async (req, res) => {
 
 //DELETE route that deletes a course
 router.delete('/courses/:id', asyncHandler(async (req, res) => {
-    let course = await Course.findByPk(req.params.id);
-    await Course.destroy(course);
+    const course = await Course.findByPk(req.params.id)
+    await course.destroy();
     res.status(204).end();
 }));
 
