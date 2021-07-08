@@ -46,10 +46,10 @@ router.get('/users', authenticateUser, asyncHandler(async (req, res) => {
 router.post('/users', asyncHandler(async (req, res) => {
     try{
         const user = req.body;
-        user.password = await bcrypt.hash(user.password, 10);
+        if(user.password){user.password = await bcrypt.hash(user.password, 10);}
         await User.create(user);
         res.location = '/';
-        res.status(201).end();
+        res.status(201);
     } catch (error) {
         console.log('ERROR: ', error.name);
         if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
@@ -88,14 +88,18 @@ router.get('/courses', asyncHandler(async (req, res) => {
 
 //GET Route that returns a specific course
 router.get('/courses/:id', asyncHandler(async (req, res) => {
-    let course = await Course.findByPk(req.params.id, {
+    let course = await Course.findByPk(req.params.id, 
+        {
         include: [
             {
                 model: User,
                 as: 'user',
             }
-        ]
-    });
+        ],
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        }
+    })
     res.status(200).json(course);
 }));
 
