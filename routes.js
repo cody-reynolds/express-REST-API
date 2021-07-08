@@ -34,16 +34,10 @@ function asyncHandler(cb) {
  * USER Routes
  */
 
-// GET Route that returns a list of all users
+// GET Route that returns the currently authenticated user
 router.get('/users', authenticateUser, asyncHandler(async (req, res) => {
-    let users = await User.findAll();
-    res.status(200).json(users);
-}));
-
-//GET Route that returns a specific user
-router.get('/users/:id', asyncHandler(async (req, res) => {
-    let user = await User.findByPk(req.params.id, {
-    });
+    //This route can access the user object on the request body thanks to the middleware.
+    let user = req.currentUser;
     res.status(200).json(user);
 }));
 

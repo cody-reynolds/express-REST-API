@@ -12,17 +12,19 @@ exports.authenticateUser = async (req, res, next) => {
 
     // Parses the user's credentials from the Authorization header.
     const credentials = auth(req);
+    console.log(credentials.name);
+    console.log(credentials.pass);
 
     // If the user's credentials are available, attempts to retrieve user from database
     // by their email address (the key from the Authorization header)
     if (credentials) {
-        const user = await User.findOne({ where: {emailAddress: credentials.username}});
+        const user = await User.findOne({ where: {emailAddress: credentials.name}});
 
         // If a user was successfully retrieved, uses bcryptjs to compare user's password
         // to user's password that was retrieved.
         if (user) {
             const authenticated = bcrypt
-                .compareSync(credentials.password, user.password);
+                .compareSync(credentials.pass, user.password);
             // If the passwords match, stores the retrieved user object on the request object
             // so subsequent middleware has access to it
             if (authenticated) {

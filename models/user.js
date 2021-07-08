@@ -59,8 +59,8 @@ module.exports = (sequelize) => {
             },
         },
     }, {
-        sequelize,
-        modelName: 'User',
+            sequelize,
+            modelName: 'User',
         });
 
     User.associate = (models) => {
