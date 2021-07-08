@@ -92,7 +92,7 @@ router.put('/courses/:id', asyncHandler(async (req, res) => {
         res.status(204).end();
     } catch (error) {
         console.log('ERROR: ', error.name);
-        if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
+        if (error.name === 'SequelizeValidationError') {
             const errors = error.errors.map(err => err.message);
             res.status(400).json({errors});
         } else {
