@@ -13,6 +13,9 @@ const Course = require ('./models').Course;
 // Import bcrypt to encrypt passwords
 const bcrypt = require('bcryptjs');
 
+// Imports user authentication function from the middleware file
+const { authenticateUser } = require('./middleware');
+
 
 // Handler function to wrap each route
 function asyncHandler(cb) {
@@ -32,7 +35,7 @@ function asyncHandler(cb) {
  */
 
 // GET Route that returns a list of all users
-router.get('/users', asyncHandler(async (req, res) => {
+router.get('/users', authenticateUser, asyncHandler(async (req, res) => {
     let users = await User.findAll();
     res.status(200).json(users);
 }));
@@ -104,7 +107,7 @@ router.get('/courses/:id', asyncHandler(async (req, res) => {
 
 
 //PUT Route that updates a specific course
-router.put('/courses/:id', asyncHandler(async (req, res) => {
+router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
     const course = req.body;
     try {
         await Course.update(course, {where: { id: req.params.id}})
@@ -122,7 +125,7 @@ router.put('/courses/:id', asyncHandler(async (req, res) => {
 
 
 //POST Route that creates a new course
-router.post('/courses', asyncHandler(async (req, res) => {
+router.post('/courses', authenticateUser, asyncHandler(async (req, res) => {
     try {
         await Course.create(req.body);
         res.location = '/';
@@ -139,7 +142,7 @@ router.post('/courses', asyncHandler(async (req, res) => {
 }));
 
 //DELETE route that deletes a course
-router.delete('/courses/:id', asyncHandler(async (req, res) => {
+router.delete('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
     const course = await Course.findByPk(req.params.id)
     await course.destroy();
     res.status(204).end();
