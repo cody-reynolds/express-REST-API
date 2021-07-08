@@ -1,7 +1,7 @@
 'use strict';
 const auth = require('basic-auth');
 const bcrypt = require('bcryptjs');
-const { User } = require('./models');
+const {User} = require('./models');
 
 // This function is borrowed and slightly modified from the example authentication function in 
 // Team Treehouse's "REST API Authentication with Express" workshop.
@@ -16,7 +16,7 @@ exports.authenticateUser = async (req, res, next) => {
     // If the user's credentials are available, attempts to retrieve user from database
     // by their email address (the key from the Authorization header)
     if (credentials) {
-        const user = await User.findOne({ where: {emailAddress: credentials.emailAddress}});
+        const user = await User.findOne({ where: {emailAddress: credentials.username}});
 
         // If a user was successfully retrieved, uses bcryptjs to compare user's password
         // to user's password that was retrieved.
@@ -32,7 +32,7 @@ exports.authenticateUser = async (req, res, next) => {
                 message = `Authentication failure for email address: ${user.emailAddress}`;
             }
         } else { // User wasn't found in the database for the email in the request object
-            message = `User not found for email address: ${credentials.emailAddress}`;
+            message = `User not found for email address: ${credentials.username}`;
         }
     } else { // No authentication header was found in the HTTP request
         message = 'Auth header not found';
