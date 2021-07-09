@@ -25,6 +25,8 @@ This project is the back-end component to a full-stack JavaScript application th
 \
 After installing the project's dependencies with `npm install`, you can start it up with `npm start`. The application will run on localhost:5000.
 
+There is also a Postman collection included that will enable to you to perform a set of test requests.
+
 At any point, if you need to reset the database data for testing purposes, you can do so by running `npm run seed` in the terminal.
 
 
