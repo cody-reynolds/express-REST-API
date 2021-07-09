@@ -116,9 +116,21 @@ router.get('/courses/:id', asyncHandler(async (req, res) => {
 //PUT Route that updates a specific course
 router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
     const course = req.body;
+    const modifyingUser = req.body.userId;
     try {
-        await Course.update(course, {where: { id: req.params.id}})
-        res.status(204).end();
+        if(modifyingUser) {
+            const courseBeingUpdated = await Course.findByPk(req.params.id);
+            const courseOwner = courseBeingUpdated.userId;
+             if(modifyingUser == courseOwner){
+                 await Course.update(course, {where: { id: req.params.id}})
+                res.status(204).end();
+            } 
+            else {
+                res.status(403).end();
+            }
+        } else {
+            res.status(403).end();
+        }
     } catch (error) {
         console.log('ERROR: ', error.name);
         if (error.name === 'SequelizeValidationError') {
