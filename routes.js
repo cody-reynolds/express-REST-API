@@ -162,9 +162,20 @@ router.post('/courses', authenticateUser, asyncHandler(async (req, res) => {
 
 //DELETE route that deletes a course
 router.delete('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
-    const course = await Course.findByPk(req.params.id)
-    await course.destroy();
-    res.status(204).end();
+    const modifyingUser = req.body.userId;
+    if(modifyingUser) {
+        const courseToDelete = await Course.findByPk(req.params.id);
+        const courseOwner = courseToDelete.userId;
+         if(modifyingUser == courseOwner){
+            await courseToDelete.destroy();
+            res.status(204).end();
+        } 
+        else {
+            res.status(403).end();
+        }
+    } else {
+        res.status(403).end();
+    }
 }));
 
 module.exports = router;
