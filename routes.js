@@ -14,8 +14,8 @@ const Course = require ('./models').Course;
 const bcrypt = require('bcryptjs');
 
 // Imports user authentication function from the middleware file
+// See middleware.js for full details of user authentication requirements
 const { authenticateUser } = require('./middleware');
-
 
 // Handler function to wrap each route
 function asyncHandler(cb) {
@@ -29,12 +29,13 @@ function asyncHandler(cb) {
     }
   }
 
-
+  
 /**
  * USER Routes
  */
 
-// GET Route that returns the currently authenticated user
+
+// GET Route - returns the currently authenticated user (Authentication required)
 router.get('/users', authenticateUser, asyncHandler(async (req, res) => {
     //This route can access the user object on the request body thanks to the middleware.
     let user = req.currentUser;
@@ -42,7 +43,7 @@ router.get('/users', authenticateUser, asyncHandler(async (req, res) => {
 }));
 
 
-// POST Route that creates a new user
+// POST Route - creates a new user
 router.post('/users', asyncHandler(async (req, res) => {
     try{
         const user = req.body;
@@ -61,18 +62,13 @@ router.post('/users', asyncHandler(async (req, res) => {
     }
 }));
 
-//DELETE route that deletes a user
-router.delete('/users/:id', asyncHandler(async (req, res) => {
-    const user = await User.findByPk(req.params.id)
-    await user.destroy();
-    res.status(204).end();
-}));
 
 /**
  * COURSE Routes
  */
 
-//GET Route that returns a list of courses
+
+// GET Route - returns a list of courses
 router.get('/courses', asyncHandler(async (req, res) => {
     let courses = await Course.findAll({
         include: [
@@ -92,7 +88,7 @@ router.get('/courses', asyncHandler(async (req, res) => {
 }));
 
 
-//GET Route that returns a specific course
+// GET Route - returns a specific course
 router.get('/courses/:id', asyncHandler(async (req, res) => {
     let course = await Course.findByPk(req.params.id, 
         {
@@ -113,7 +109,9 @@ router.get('/courses/:id', asyncHandler(async (req, res) => {
 }));
 
 
-//PUT Route that updates a specific course
+// PUT Route that updates a specific course (Authentication required)
+// Modifications are restricted to course owners (the user ID attribute of the course)
+// The modifying user's ID must match in order for modification to work.
 router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
     const course = req.body;
     const modifyingUser = req.body.userId;
@@ -143,7 +141,7 @@ router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
 }));
 
 
-//POST Route that creates a new course
+// POST Route - creates a new course (Authentication required)
 router.post('/courses', authenticateUser, asyncHandler(async (req, res) => {
     try {
         await Course.create(req.body);
@@ -160,7 +158,9 @@ router.post('/courses', authenticateUser, asyncHandler(async (req, res) => {
     }
 }));
 
-//DELETE route that deletes a course
+// DELETE route - deletes a course (Authentication required)
+// Deletions are restricted to course owners (the user ID attribute of the course)
+// The modifying user's ID must match in order for deletion to work.
 router.delete('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
     const modifyingUser = req.body.userId;
     if(modifyingUser) {

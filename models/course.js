@@ -41,6 +41,7 @@ module.exports = (sequelize) => {
       modelName: 'Course',
       });
 
+  //Creates the one to one relationship from Courses to Users (course owners)
   Course.associate = (models) => {
     Course.belongsTo(models.User, {
       as: 'user', //alias to prevent capitalization issues

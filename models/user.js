@@ -7,7 +7,7 @@ const PROTECTED_ATTRIBUTES = ['password', 'createdAt', 'updatedAt']
 module.exports = (sequelize) => {
     class User extends Model {
         // Instance method for hiding password and other fields we do not want to return
-        // Thank you to user Arivia on StackOverflow:
+        // Special thanks to user Arivia on StackOverflow:
         // https://stackoverflow.com/questions/27972271/sequelize-dont-return-password
         toJSON () {
             let attributes = Object.assign({}, this.get())
@@ -78,6 +78,7 @@ module.exports = (sequelize) => {
             modelName: 'User',
         });
 
+    //Creates the one-to-many relationship between Users and Courses
     User.associate = (models) => {
         User.hasMany(models.Course, {
             as: 'user', //alias to prevent capitalization issues
