@@ -1,8 +1,23 @@
 'use strict';
 const {Model, DataTypes} = require('sequelize');
 
+//Initializes variable for modifying the toJSON method below
+const PROTECTED_ATTRIBUTES = ['password', 'createdAt', 'updatedAt']
+
 module.exports = (sequelize) => {
-    class User extends Model {};
+    class User extends Model {
+        // Instance method for hiding password and other fields we do not want to return
+        // Thank you to user Arivia on StackOverflow:
+        // https://stackoverflow.com/questions/27972271/sequelize-dont-return-password
+        toJSON () {
+            let attributes = Object.assign({}, this.get())
+            for (let a of PROTECTED_ATTRIBUTES) {
+                delete attributes[a]
+            }
+            return attributes
+        }
+    };
+
     User.init({
         firstName: {
             type: DataTypes.STRING,
@@ -72,5 +87,6 @@ module.exports = (sequelize) => {
             },
         });
     };
+
         return User;
-    };
+};

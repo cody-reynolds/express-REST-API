@@ -79,8 +79,14 @@ router.get('/courses', asyncHandler(async (req, res) => {
             {
                 model: User,
                 as: 'user',
+                attributes: {
+                    exclude: ['password', 'createdAt', 'updatedAt']
+                }
             }
-        ]
+        ],
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        }
     });
     res.status(200).json(courses);
 }));
@@ -94,6 +100,9 @@ router.get('/courses/:id', asyncHandler(async (req, res) => {
             {
                 model: User,
                 as: 'user',
+                attributes: {
+                    exclude: ['password', 'createdAt', 'updatedAt']
+                }
             }
         ],
         attributes: {
