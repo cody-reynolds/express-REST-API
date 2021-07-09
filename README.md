@@ -14,7 +14,7 @@ Even if authentication is successful, only the course owner (the associated User
 \
 This project is the back-end component to a full-stack JavaScript application that uses React on the front end. I built this project to gain some experience building a REST API from scratch, and specifically to practice a few key concepts:
 
-- Sequelize model creation
+- Sequelize model creation and model associations
 - Database-side validation (notNull, notEmpty, unique, valid email)
 - User authentication and password hashing
 - Sending the correct HTTP status codes
