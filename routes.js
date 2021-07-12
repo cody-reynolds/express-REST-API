@@ -49,7 +49,7 @@ router.post('/users', asyncHandler(async (req, res) => {
         const user = req.body;
         if(user.password){user.password = await bcrypt.hash(user.password, 10);}
         await User.create(user);
-        res.location = '/';
+        res.location('/');
         res.status(201).end();
     } catch (error) {
         console.log('ERROR: ', error.name);
@@ -145,7 +145,7 @@ router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
 router.post('/courses', authenticateUser, asyncHandler(async (req, res) => {
     try {
         await Course.create(req.body);
-        res.location = '/';
+        res.location('/');
         res.status(201).end();
     } catch (error) {
         console.log('ERROR: ', error.name);
@@ -162,7 +162,7 @@ router.post('/courses', authenticateUser, asyncHandler(async (req, res) => {
 // Deletions are restricted to course owners (the user ID attribute of the course)
 // The modifying user's ID must match in order for deletion to work.
 router.delete('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
-    const modifyingUser = req.body.userId;
+    const modifyingUser = req.currentUser.dataValues.id;
     if(modifyingUser) {
         const courseToDelete = await Course.findByPk(req.params.id);
         const courseOwner = courseToDelete.userId;
