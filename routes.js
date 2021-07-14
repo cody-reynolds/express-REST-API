@@ -125,7 +125,7 @@ router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
                  await Course.update(course, {where: { id: req.params.id}})
                 res.status(204).end();
             } else {
-                res.status(403).end();
+                res.status(403).json({message: "Only the course owner is permitted to modify this course."});
             }
         }
     } catch (error) {
@@ -144,7 +144,7 @@ router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
 router.post('/courses', authenticateUser, asyncHandler(async (req, res) => {
     try {
         const course = await Course.create(req.body);
-        res.location(`/${course.id}`);
+        res.location(`/courses/${course.id}`);
         res.status(201).end();
     } catch (error) {
         console.log('ERROR: ', error.name);
@@ -170,10 +170,10 @@ router.delete('/courses/:id', authenticateUser, asyncHandler(async (req, res) =>
             res.status(204).end();
         } 
         else {
-            res.status(403).end();
+            res.status(403).json({message: "Only the course owner is permitted to delete this course."});
         }
     } else {
-        res.status(403).end();
+        res.status(403).json({message: "Only the course owner is permitted to delete this course."});
     }
 }));
 

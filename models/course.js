@@ -47,7 +47,7 @@ module.exports = (sequelize) => {
       as: 'user', //alias to prevent capitalization issues
       foreignKey: {
         fieldName: 'userId',
-        allowNull: false,
+        allowNull: true,
       },
     });
   };
