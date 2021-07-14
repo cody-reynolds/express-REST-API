@@ -39,7 +39,9 @@ function asyncHandler(cb) {
 router.get('/users', authenticateUser, asyncHandler(async (req, res) => {
     //This route can access the user object on the request body thanks to the middleware.
     let user = req.currentUser;
-    res.status(200).json(user);
+    if(user){
+        res.status(200).json(user);
+    }
 }));
 
 
@@ -114,7 +116,7 @@ router.get('/courses/:id', asyncHandler(async (req, res) => {
 // The modifying user's ID must match in order for modification to work.
 router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
     const course = req.body;
-    const modifyingUser = req.body.userId;
+    const modifyingUser = req.currentUser.id;
     try {
         if(modifyingUser) {
             const courseBeingUpdated = await Course.findByPk(req.params.id);
@@ -122,12 +124,9 @@ router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
              if(modifyingUser == courseOwner){
                  await Course.update(course, {where: { id: req.params.id}})
                 res.status(204).end();
-            } 
-            else {
+            } else {
                 res.status(403).end();
             }
-        } else {
-            res.status(403).end();
         }
     } catch (error) {
         console.log('ERROR: ', error.name);
@@ -144,8 +143,8 @@ router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
 // POST Route - creates a new course (Authentication required)
 router.post('/courses', authenticateUser, asyncHandler(async (req, res) => {
     try {
-        await Course.create(req.body);
-        res.location('/');
+        const course = await Course.create(req.body);
+        res.location(`/${course.id}`);
         res.status(201).end();
     } catch (error) {
         console.log('ERROR: ', error.name);
